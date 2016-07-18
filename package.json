@@ -1,0 +1,16 @@
+{
+  "name": "integration-node",
+  "version": "1.0.0",
+  "description": "A simple integration solution based on Node.js",
+  "main": "int-node.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ['integration'],
+  "author": "Francesco Ganora <francescoganora@gmail.com>",
+  "license": "MIT"
+}
