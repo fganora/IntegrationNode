@@ -1,7 +1,7 @@
 {
   "name": "integration-node",
-  "version": "1.0.0",
-  "description": "A simple integration solution based on Node.js",
+  "version": "0.0.1",
+  "description": "A simple integration framework based on Node.js",
   "main": "int-node.js",
   "directories": {
     "doc": "docs",
@@ -10,7 +10,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ['integration'],
+  "keywords": [],
   "author": "Francesco Ganora <francescoganora@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "command-line-args": "^3.0.0",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0"
+  }
 }
