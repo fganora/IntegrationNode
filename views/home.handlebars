@@ -1,1 +1,16 @@
-<h1>Integration-Node Instance Status:</h1>
+<h2>Instance Status and System Configuration:</h2>
+<form>
+  <fieldset class="column">
+    <legend>System Info</legend>
+    <label class="name">Platform: </label>  <label>{{osType}} ({{osRelease}}) ({{architecture}})</label> <br>
+    <label class="name">Hostname: </label>  <label>{{hostName}}</label> <br>
+     <label class="name">Uptime: </label>  <label>{{uptime}} sec.</label> <br>
+     <label class="name">Home directory: </label>  <label>{{homeDir}}</label> <br>
+  </fieldset>
+
+  <fieldset class="column">
+    <legend>Instance info</legend>
+    <label class="name">Port: </label>  <label>{{portNr}}</label> <br>
+    <label class="name">Base directory: </label>  <label>{{baseDir}}</label> <br>
+  </fieldset>
+</form>

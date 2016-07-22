@@ -32,7 +32,7 @@ var  options = require('./lib/options')(process.argv);
 console.log("2. command-line options: " + JSON.stringify(options));
 
 // startIntegration-Node  controller
-var  controller = require('./lib/controller')(options);
+var  controller = require('./lib/controller')(options, __dirname);
 
 //
 // graceful shutdown

@@ -2,8 +2,56 @@
 <html>
 <head>
   <title>Integration-Node</title>
+  <style type="text/css">
+    header {background-color: #fff2cc;}
+    body {font-family: Arial, Verdana, sans-serif;}
+
+    h1, h2, h3 {font-family: Arial, Verdana, sans-serif;
+                color: DarkRed;}
+
+    .hdr {display: inline-block}
+    header h1 {text-align: center}
+    div.hdr {position: relative;
+            top: -20px;}
+    nav li { background-color: #ffcc66;
+                font-weight: bold;
+                text-transform: uppercase;
+                display: inline;
+                padding: 10px;
+                  }
+   legend {
+      font-weight: bold;
+      font-style: italic;
+   }
+   fieldset.column {
+      background-color: Azure;
+      width: 600px;
+      float: left;
+      margin: 5px;
+      padding: 5px;
+   }
+
+   label.name {
+    font-style: italic;
+   }
+
+  </style>
 </head>
 <body>
+  <header>
+    <img class="hdr" src="/img/node-js.png" alt="Node.js">
+    <div class="hdr">
+      <h1>Integration-Node</h1>
+      <nav>
+        <ul class="top-menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="/log">Log</a></li>
+        <li><a href="/components">Components</a></li>
+        <li><a href="/integrations">Integrations</a></li>
+      </ul>
+      </nav>
+    </div>
+  </header>
   {{{body}}}
 </body>
 </html>
