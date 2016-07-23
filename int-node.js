@@ -31,7 +31,9 @@ const sourceFile = __dirname + '/int-node.js';
 
 try {
   // create instance logger
-  var instanceLogger = new Logger();
+  var instanceLogger = new Logger('INSTANCE', __dirname);
+  instanceLogger.info('>>>');
+  instanceLogger.info('Integration-Node instance starting.');
 
   // load instance configuration and merge command line options
   var instanceConfigFile = __dirname + '/config/integration-node-config.json';  // default config file
