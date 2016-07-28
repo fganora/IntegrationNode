@@ -2,40 +2,16 @@
 <html>
 <head>
   <title>Integration-Node</title>
-  <style type="text/css">
-    header {background-color: #fff2cc;}
-    body {font-family: Arial, Verdana, sans-serif;}
+  {{#if showTests}}
+    <link rel="stylesheet" href="/vendor/mocha.css">
+  {{/if}}
+  <script
+        src="http://code.jquery.com/jquery-3.1.0.min.js"
+        integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
+        crossorigin="anonymous"></script>
 
-    h1, h2, h3 {font-family: Arial, Verdana, sans-serif;
-                color: DarkRed;}
+  <link rel="stylesheet" href="/css/main.css">
 
-    .hdr {display: inline-block}
-    header h1 {text-align: center}
-    div.hdr {position: relative;
-            top: -20px;}
-    nav li { background-color: #ffcc66;
-                font-weight: bold;
-                text-transform: uppercase;
-                display: inline;
-                padding: 10px;
-                  }
-   legend {
-      font-weight: bold;
-      font-style: italic;
-   }
-   fieldset.column {
-      background-color: Azure;
-      width: 600px;
-      float: left;
-      margin: 5px;
-      padding: 5px;
-   }
-
-   label.name {
-    font-style: italic;
-   }
-
-  </style>
 </head>
 <body>
   <header>
@@ -53,5 +29,20 @@
     </div>
   </header>
   {{{body}}}
+
+  {{#if showTests}}
+    <div id="mocha"></div>
+    <script type="text/javascript" src="/vendor/mocha.js"></script>
+    <script type="text/javascript" src="/vendor/chai.js"></script>
+    <script type="text/javascript">
+      mocha.ui('tdd');
+      var assert = chai.assert;
+    </script>
+    <script type="text/javascript" src="/test/global.js"></script>
+    {{#if pageTestScript}}
+      <script type="text/javascript" scr="{{pageTestScript}}"></script>
+    {{/if}}
+    <script type="text/javascript">mocha.run();</script>
+  {{/if}}
 </body>
 </html>

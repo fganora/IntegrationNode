@@ -1,7 +1,7 @@
 {
   "env": "development",
   "port": 3000,
-  "redis-port": 6379,
+  "redis-socket": "/tmp/redis.sock",
   "redis-db" : 0
   "log-level": "info"
 }

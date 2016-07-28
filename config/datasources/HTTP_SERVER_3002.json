@@ -1,0 +1,9 @@
+{
+  "name": "HTTP_3002",
+  "type": "HTTP_SERVER",
+  "active": true,
+  "config" : {
+    "port": 3002,
+    "protocol": "http"
+  }
+}

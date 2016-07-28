@@ -19,5 +19,9 @@
     "express-handlebars": "^3.0.0",
     "nconf": "^0.8.4",
     "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
   }
 }

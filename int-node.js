@@ -26,6 +26,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 const fs = require('fs');
 const nconf = require('nconf');
 const Logger = require('./lib/logger.js');
+const RedisClient = require('./lib/redis-client.js');
+const cp = require('child_process');
 
 const sourceFile = __dirname + '/int-node.js';
 
@@ -77,9 +79,33 @@ try {
   instanceLogger.setLevel(instanceConfiguration['log-level']);
   instanceLogger.verbose('Instance configuration is : %j.', JSON.stringify(instanceConfiguration) );
 
+  // connect to Redis via Socket
+  var instanceRedisConnection = new RedisClient();
+
+  // spawn data sources
+  var dataSourceArgs = [...instanceConfiguration['data-sources']];
+      dataSourceArgs.unshift(__dirname);   // push root Integration-Node directory to child process
+  var dataSourceController = cp.fork(`${__dirname}/lib/data-source.js`, dataSourceArgs);
+
+  // handle message from child Data Source Controller
+  dataSourceController.on('message', (msg) => {
+    if (msg.status === "INFO") {
+       instanceLogger.info(msg.infoMsg);
+    }
+    else  if (msg.status === "VERBOSE") {
+       instanceLogger.verbose(msg.infoMsg);
+    }
+    else if (msg.status === "ERROR") {
+       instanceLogger.error('Data Source Controller reported error: ' + JSON.stringify(msg.errorDetails));
+    }
+  });
 
   // startIntegration-Node  controller
-  var  controller = require('./lib/controller')(instanceConfiguration, __dirname, instanceLogger);
+  var  controller = require('./lib/controller')({instanceConfiguration: instanceConfiguration,
+                                                basedir: __dirname,
+                                                instanceLogger: instanceLogger,
+                                                instanceRedisConnection: instanceRedisConnection,
+                                                dataSourceController: dataSourceController});
 
 }
 catch (e) {
@@ -88,13 +114,13 @@ catch (e) {
 }
 
 
-
-
 //
 // graceful shutdown
 //
 process.on('SIGINT', () => {
   instanceLogger.info('Integration-Node instance now exiting...');
+  instanceRedisConnection.disconnect();
+  instanceLogger.info('Disconnected from Redis DB');
   process.exit();
 });
 
