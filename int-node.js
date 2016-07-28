@@ -25,20 +25,23 @@ OTHER DEALINGS IN THE SOFTWARE.
 // imports
 const fs = require('fs');
 const nconf = require('nconf');
+
+const globals = require('./lib/globals.js');
 const Logger = require('./lib/logger.js');
 const RedisClient = require('./lib/redis-client.js');
-const cp = require('child_process');
 
-const sourceFile = __dirname + '/int-node.js';
 
 try {
+  globals.baseDir = __dirname;  // int-node.js location
+
   // create instance logger
-  var instanceLogger = new Logger('INSTANCE', __dirname);
+  var instanceLogger = new Logger('INSTANCE', globals.baseDir);
+  globals.instanceLogger = instanceLogger;
   instanceLogger.info('>>>');
   instanceLogger.info('Integration-Node instance starting.');
 
   // load instance configuration and merge command line options
-  var instanceConfigFile = __dirname + '/config/integration-node-config.json';  // default config file
+  var instanceConfigFile = globals.baseDir + '/config/integration-node-config.json';  // default config file
 
   // config file specified
   if (process.argv[2] && !process.argv[2].startsWith('--')) {
@@ -66,7 +69,7 @@ try {
     process.exit(1);
 
   }
-
+  // log to file
   nconf.add('INSTANCE', { type: 'file', file: instanceConfigFile });
 
   var instanceConfiguration = nconf.get();
@@ -74,38 +77,32 @@ try {
   for ( var opt in cmdLineOptions) {
     instanceConfiguration[opt] = cmdLineOptions[opt];
   }
+  globals.instanceConfiguration = instanceConfiguration;
+
+  // set other globals
+  globals.environment = instanceConfiguration['env'];
+  globals.controllerPort = instanceConfiguration['port'];
+  globals.redisSocket = instanceConfiguration['redis-socket'];
+  globals.redisDb = instanceConfiguration['redis-db'];
+  globals.logLevel = instanceConfiguration['log-level'];
 
   // set logging level
-  instanceLogger.setLevel(instanceConfiguration['log-level']);
+  instanceLogger.setLevel(globals.logLevel);
   instanceLogger.verbose('Instance configuration is : %j.', JSON.stringify(instanceConfiguration) );
 
   // connect to Redis via Socket
   var instanceRedisConnection = new RedisClient();
+  globals.instanceRedisConnection = instanceRedisConnection;
 
-  // spawn data sources
-  var dataSourceArgs = [...instanceConfiguration['data-sources']];
-      dataSourceArgs.unshift(__dirname);   // push root Integration-Node directory to child process
-  var dataSourceController = cp.fork(`${__dirname}/lib/data-source.js`, dataSourceArgs);
 
-  // handle message from child Data Source Controller
-  dataSourceController.on('message', (msg) => {
-    if (msg.status === "INFO") {
-       instanceLogger.info(msg.infoMsg);
-    }
-    else  if (msg.status === "VERBOSE") {
-       instanceLogger.verbose(msg.infoMsg);
-    }
-    else if (msg.status === "ERROR") {
-       instanceLogger.error('Data Source Controller reported error: ' + JSON.stringify(msg.errorDetails));
-    }
-  });
 
   // startIntegration-Node  controller
-  var  controller = require('./lib/controller')({instanceConfiguration: instanceConfiguration,
-                                                basedir: __dirname,
-                                                instanceLogger: instanceLogger,
-                                                instanceRedisConnection: instanceRedisConnection,
-                                                dataSourceController: dataSourceController});
+  var  controller = require('./lib/controller')(
+                                                // {instanceConfiguration: instanceConfiguration,
+                                                // basedir: __dirname,
+                                                // instanceLogger: instanceLogger,
+                                                // instanceRedisConnection: instanceRedisConnection}
+                                                );
 
 }
 catch (e) {
