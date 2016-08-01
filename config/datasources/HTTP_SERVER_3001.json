@@ -1,6 +1,6 @@
 {
   "name": "HTTP_3001",
-  "type": "HTTP_SERVER",
+  "type": "HTTP-SERVER",
   "active": true,
   "config" : {
     "port": 3001,

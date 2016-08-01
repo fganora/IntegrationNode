@@ -94,15 +94,18 @@ try {
   var instanceRedisConnection = new RedisClient();
   globals.instanceRedisConnection = instanceRedisConnection;
 
+  // store globals in DB
+  globals.instanceRedisConnection.hmset("int-node:globals", {baseDir: globals.baseDir,
+                                                            environment: globals.environment,
+                                                            controllerPort: globals.controllerPort,
+                                                            redisSocket: globals.redisSocket,
+                                                            redisDb: globals.redisDb,
+                                                            logLevel: globals.logLevel,
+                                                            instanceConfiguration: JSON.stringify(globals.instanceConfiguration)})
+    .catch((err) => {console.log(err);});
 
-
-  // startIntegration-Node  controller
-  var  controller = require('./lib/controller')(
-                                                // {instanceConfiguration: instanceConfiguration,
-                                                // basedir: __dirname,
-                                                // instanceLogger: instanceLogger,
-                                                // instanceRedisConnection: instanceRedisConnection}
-                                                );
+  // start Integration-Node  controller
+  var  controller = require('./lib/controller')();
 
 }
 catch (e) {
