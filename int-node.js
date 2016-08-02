@@ -31,6 +31,9 @@ const Logger = require('./lib/logger.js');
 const RedisClient = require('./lib/redis-client.js');
 
 
+var instanceRedisConnection;
+var controller;
+
 try {
   globals.baseDir = __dirname;  // int-node.js location
 
@@ -91,9 +94,28 @@ try {
   instanceLogger.verbose('Instance configuration is : %j.', JSON.stringify(instanceConfiguration) );
 
   // connect to Redis via Socket
-  var instanceRedisConnection = new RedisClient();
+  instanceRedisConnection = new RedisClient();
   globals.instanceRedisConnection = instanceRedisConnection;
 
+  //
+  //  REST OF TOP-LEVEL LOGIC IN HANDLER FOR 'ready' EVENT OF REDIS DB CONNECTION (BELOW)
+  //
+}
+catch (e) {
+  instanceLogger.error('A technical error occurred during Integration-Node startup.' +
+    ' Integration-Node instance must abort. Original error is: %j', process.argv[2], e );
+  process.exit(1);
+}
+
+
+
+//
+// Redis DB events
+//
+
+// start Integration-Node controller only when the DB connection is ready
+globals.instanceRedisConnection.getConnection().on('ready', function() {
+   instanceLogger.info('Connected to Redis database not responding on socket /tmp/redis.sock');
   // store globals in DB
   globals.instanceRedisConnection.hmset("int-node:globals", {baseDir: globals.baseDir,
                                                             environment: globals.environment,
@@ -102,20 +124,20 @@ try {
                                                             redisDb: globals.redisDb,
                                                             logLevel: globals.logLevel,
                                                             instanceConfiguration: JSON.stringify(globals.instanceConfiguration)})
-    .catch((err) => {console.log(err);});
-
+    .catch((err) => {throw err;} );
   // start Integration-Node  controller
-  var  controller = require('./lib/controller')();
+  controller = require('./lib/controller')();
+});
 
-}
-catch (e) {
-  instanceLogger.error('A technical error occurred. Integration-Node instance must abort. Original error is: %j', process.argv[2], e );
+
+globals.instanceRedisConnection.getConnection().on('error', function(err) {
+  instanceLogger.error('Redis database not responding on socket /tmp/redis.sock. Integration-Node instance must abort. Original error is: %j', err);
   process.exit(1);
-}
+});
 
 
 //
-// graceful shutdown
+// instance shutdown events
 //
 process.on('SIGINT', () => {
   instanceLogger.info('Integration-Node instance now exiting...');
