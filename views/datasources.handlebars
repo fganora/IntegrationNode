@@ -1,10 +1,25 @@
 <h2>Data Sources:</h2>
 
 <table>
+<tr>
+  <th>Name</th>
+  <th>Active?</th>
+  <th>Type</th>
+  <th>Log unm. evt?</th>
+  <th>Configuration</th>
+
+</tr>
 {{#each dataSources}}
 <tr>
-<td>{{name}}</td>
-<td>{{type}}</td>
+  <td class="emphasized">{{name}}</td>
+  {{#if active}}
+      <td class ="centered"><a href="/datasource/toggle?ds_name={{name}}"><img src="/img/GreenBall.png" title="Disable data source"></a></td>
+  {{else}}
+      <td class ="centered"><a href="/datasource/toggle?ds_name={{name}}"><img src="/img/RedBall.png" title="Enable data source"></a></td>
+  {{/if}}
+  <td class ="centered">{{type}}</td>
+  <td class ="centered">{{logUnmatchedEvents}}</td>
+  <td>{{config}}</td>
 </tr>
 {{/each}}
 </table>

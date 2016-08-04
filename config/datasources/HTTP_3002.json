@@ -1,9 +1,10 @@
 {
-  "name": "HTTP_3001",
+  "name": "HTTP_3002",
   "type": "HTTP-SERVER",
   "active": true,
   "config" : {
-    "port": 3001,
+    "port": 3002,
     "protocol": "http"
-  }
+  },
+  "logUnmatchedEvents": true
 }

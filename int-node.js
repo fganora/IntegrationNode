@@ -72,7 +72,7 @@ try {
     process.exit(1);
 
   }
-  // log to file
+  // set instance configuration source to specified config file
   nconf.add('INSTANCE', { type: 'file', file: instanceConfigFile });
 
   var instanceConfiguration = nconf.get();
@@ -117,7 +117,7 @@ catch (e) {
 globals.instanceRedisConnection.getConnection().on('ready', function() {
    instanceLogger.info('Connected to Redis database not responding on socket /tmp/redis.sock');
   // store globals in DB
-  globals.instanceRedisConnection.hmset("int-node:globals", {baseDir: globals.baseDir,
+  globals.instanceRedisConnection.hmset("int-node::globals", {baseDir: globals.baseDir,
                                                             environment: globals.environment,
                                                             controllerPort: globals.controllerPort,
                                                             redisSocket: globals.redisSocket,

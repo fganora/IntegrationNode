@@ -4,6 +4,6 @@
   "redis-socket": "/tmp/redis.sock",
   "redis-db" : 0,
   "log-level": "info",
-   "data-sources": ["HTTP_SERVER_3001", "HTTP_SERVER_3002"]
-
+  "data-sources": ["HTTP_3001", "HTTP_3002"],
+  "nr-of-workers" : 2
 }
