@@ -29,15 +29,25 @@ const nconf = require('nconf');
 const globals = require('./lib/globals.js');
 const Logger = require('./lib/logger.js');
 const RedisClient = require('./lib/redis-client.js');
+const integrationConfiguration = require('./lib/integration-configuration.js')
 
 
 var instanceRedisConnection;
 var controller;
 
+/**
+* This is the Integration-Node main script:
+* - read confguration file and command line options
+* - initialize instance logging
+* - assign some globals
+* - create Redis DB connection
+* - when Redis connection is ready save globals to DB and starts the module:controller
+* - handles process termination events
+*/
 try {
   globals.baseDir = __dirname;  // int-node.js location
 
-  // create instance logger
+  /** create instance logger */
   var instanceLogger = new Logger('INSTANCE', globals.baseDir);
   globals.instanceLogger = instanceLogger;
   instanceLogger.info('>>>');
@@ -61,7 +71,7 @@ try {
 
   instanceLogger.info('Instance configuration file is %s.', instanceConfigFile );
 
-  // validate config file
+  /** validate config file */
   try {
     let configFileContents = fs.readFileSync(instanceConfigFile);
     JSON.parse(configFileContents);
@@ -85,15 +95,16 @@ try {
   // set other globals
   globals.environment = instanceConfiguration['env'];
   globals.controllerPort = instanceConfiguration['port'];
-  globals.redisSocket = instanceConfiguration['redis-socket'];
+  globals.redisSocket = instanceConfiguration['socket'];
   globals.redisDb = instanceConfiguration['redis-db'];
   globals.logLevel = instanceConfiguration['log-level'];
 
   // set logging level
   instanceLogger.setLevel(globals.logLevel);
+  console
   instanceLogger.verbose('Instance configuration is : %j.', JSON.stringify(instanceConfiguration) );
 
-  // connect to Redis via Socket
+  /** connect to Redis via Socket */
   instanceRedisConnection = new RedisClient();
   globals.instanceRedisConnection = instanceRedisConnection;
 
@@ -113,9 +124,9 @@ catch (e) {
 // Redis DB events
 //
 
-// start Integration-Node controller only when the DB connection is ready
+/** start Integration-Node controller only when the DB connection is ready */
 globals.instanceRedisConnection.getConnection().on('ready', function() {
-   instanceLogger.info('Connected to Redis database not responding on socket /tmp/redis.sock');
+   instanceLogger.info('Connected to Redis database on socket /tmp/redis.sock');
   // store globals in DB
   globals.instanceRedisConnection.hmset("int-node::globals", {baseDir: globals.baseDir,
                                                             environment: globals.environment,
@@ -124,9 +135,19 @@ globals.instanceRedisConnection.getConnection().on('ready', function() {
                                                             redisDb: globals.redisDb,
                                                             logLevel: globals.logLevel,
                                                             instanceConfiguration: JSON.stringify(globals.instanceConfiguration)})
-    .catch((err) => {throw err;} );
-  // start Integration-Node  controller
-  controller = require('./lib/controller')();
+    .then( function() {
+      // synchronously load and validate complete integration configuration
+      integrationConfiguration.loadSync();
+
+      // start Integration-Node  controller with UI
+      controller = require('./lib/controller')();
+    })
+    .catch((err) => {
+      instanceLogger.error('Redis database error. Integration-Node instance must abort. Original error is: %j', err);
+      process.exit(1);
+    } );
+
+
 });
 
 
