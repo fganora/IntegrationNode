@@ -54,4 +54,8 @@
               padding: 10px;}
    td {padding: 10px;}
 
+   li.active {color: DarkGreen;
+              font-weight: bold};
+   li.inactive {color: Red;};
+
 

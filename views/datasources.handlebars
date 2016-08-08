@@ -7,11 +7,11 @@
   <th>Type</th>
   <th>Log unm. evt?</th>
   <th>Configuration</th>
-
+  <th>Integr. Groups</th>
 </tr>
 {{#each dataSources}}
 <tr>
-  <td class="emphasized">{{name}}</td>
+  <td class="emphasized"><a href="/datasources/{{name}}">{{name}}</a></td>
   {{#if active}}
       <td class ="centered"><a href="/datasource/toggle?ds_name={{name}}"><img src="/img/GreenBall.png" title="Disable data source"></a></td>
   {{else}}
@@ -20,6 +20,13 @@
   <td class ="centered">{{type}}</td>
   <td class ="centered">{{logUnmatchedEvents}}</td>
   <td>{{config}}</td>
+  <td>
+    <ul>
+    {{#each integrationGroups}}
+      <li><a href="/integration-groups/{{.}}">{{.}}</a></li>
+    {{/each}}
+    </ul>
+  </td>
 </tr>
 {{/each}}
 </table>

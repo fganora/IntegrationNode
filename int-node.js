@@ -140,7 +140,9 @@ globals.instanceRedisConnection.getConnection().on('ready', function() {
       integrationConfiguration.loadSync();
 
       // start Integration-Node  controller with UI
-      controller = require('./lib/controller')();
+      controller = require('./lib/controller');
+      setImmediate(controller);
+
     })
     .catch((err) => {
       instanceLogger.error('Redis database error. Integration-Node instance must abort. Original error is: %j', err);
