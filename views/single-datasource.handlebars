@@ -1,32 +1,42 @@
-<h2>Data source: {{name}}</h2>
+<h2>Data  source: {{name}} [{{type}}]</h2>
+<table>
+<tr>
+  <td><h4>Active status:</h4></td>
+<td>
+  {{#if active}}
+  <a href="/datasource/toggle?ds_name={{name}}"><img src="/img/GreenBall.png" title="Disable data source"></a>
+{{else}}
+  <a href="/datasource/toggle?ds_name={{name}}"><img src="/img/RedBall.png" title="Enable data source"></a>
+{{/if}}
+</td>
+ <td><h4>Log unmatched events:</h4></td><td>{{logUnmatchedEvents}}</td>
+</tr>
+<tr>
+  <td><h4>Configuration:</h4></td><td colspan="3">{{config}}</td>
+</tr>
+</table>
+
 
 <table>
 <tr>
-  <th>Name</th>
-  <th>Active?</th>
-  <th>Data Source</th>
-  <th>Integrations</th>
+  <th>Trigger Conditions</th>
+  <th>Triggered integration</th>
 </tr>
-{{#each integrationGroups}}
-<tr>
-  <td class="emphasized">{{name}}</td>
-  {{#if active}}
-      <td class ="centered"><a href="/integration-group/toggle?ig_name={{name}}"><img src="/img/GreenBall.png" title="Disable integration group"></a></td>
-  {{else}}
-      <td class ="centered"><a href="/integration-group/toggle?ig_name={{name}}"><img src="/img/RedBall.png" title="Enable integration group"></a></td>
-  {{/if}}
-  <td class ="centered">{{datasource}}</td>
-  <td>
-    <ul>
-    {{#each integrations}}
-      {{#if active}}
-        <li class="active">{{name}}</li>
-      {{else}}
-        <li class="inactive">{{name}}</li>
-      {{/if}}
-    {{/each}}
-    </ul>
-  </td>
-</tr>
+
+{{#each triggers}}
+  <tr>
+    <td>
+      <ul>
+          {{#each triggerFields}}
+        <li>{{fieldName}}={{fieldValue}}</li>
+          {{/each}}
+      </ul>
+    </td>
+    <td>{{integration}}</td>
+  </tr>
 {{/each}}
+
 </table>
+
+
+
