@@ -22,7 +22,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict";
 
-// imports
+/**
+ * Module dependencies
+ */
 const fs = require('fs');
 const nconf = require('nconf');
 
@@ -31,7 +33,9 @@ const Logger = require('./lib/logger.js');
 const RedisClient = require('./lib/redis-client.js');
 const integrationConfiguration = require('./lib/integration-configuration.js')
 
-
+/**
+ * Module globals
+ */
 var instanceRedisConnection;
 var controller;
 
@@ -73,7 +77,7 @@ module.exports.init = function() {
 
     instanceLogger.info('Instance configuration file is %s.', instanceConfigFile );
 
-    /** validate config file */
+    // validate config file
     try {
       let configFileContents = fs.readFileSync(instanceConfigFile);
       JSON.parse(configFileContents);
@@ -84,6 +88,7 @@ module.exports.init = function() {
       process.exit(1);
 
     }
+
     // set instance configuration source to specified config file
     nconf.add('INSTANCE', { type: 'file', file: instanceConfigFile });
 

@@ -6,5 +6,6 @@
     "port": 3001,
     "protocol": "http"
   },
+  "logLevel" : "verbose",
   "logUnmatchedEvents": true
 }
